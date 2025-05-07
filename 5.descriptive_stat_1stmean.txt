@@ -1,0 +1,41 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('employee_2.csv')  # Change the file name if needed
+print("First 5 rows:\n", df.head())
+
+# 1. Summary statistics for numeric columns (e.g., Age, Salary)
+if 'Age' in df.columns and 'Salary' in df.columns:
+    print("\nSummary Statistics:")
+    print("Mean Age:", df['Age'].mean())
+    print("Median Age:", df['Age'].median())
+    print("Minimum Age:", df['Age'].min())
+
+    print("Mean Salary:", df['Salary'].mean())
+    print("Median Salary:", df['Salary'].median())
+    print("Minimum Salary:", df['Salary'].min())
+
+# 2. Group by a categorical column (e.g., Department or AgeGroup)
+if 'Department' in df.columns and 'Salary' in df.columns:
+    print("\nGrouped Summary by Department:")
+    print(df.groupby('Department')['Salary'].describe())
+
+    # Numeric list for each department
+    salary_by_dept = df.groupby('Department')['Salary'].apply(list)
+    print("\nList of salaries by department:\n", salary_by_dept)
+
+# 3. Grouping by JOB_ID and its count
+if 'JOB_ID' in df.columns:
+    job_counts = df['JOB_ID'].value_counts()
+    print("\nJOB_ID Count:\n", job_counts)
+
+# 4. Data Visualization (e.g., plot Salary column)
+if 'Salary' in df.columns:
+    plt.figure(figsize=(6, 4))
+    plt.hist(df['Salary'], bins=10, color='skyblue', edgecolor='black')
+    plt.title('Salary Distribution')
+    plt.xlabel('Salary')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()

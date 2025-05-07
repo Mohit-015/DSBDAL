@@ -1,0 +1,58 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+from nltk import pos_tag
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Download necessary resources (run once)
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+
+# Sample document
+document = "The quick brown fox jumped over the lazy dog."
+
+# 1. Tokenization
+tokens = word_tokenize(document)
+print("Tokens:", tokens)
+
+# 2. POS Tagging
+pos_tags = pos_tag(tokens)
+print("POS Tags:", pos_tags)
+
+# 3. Stop Words Removal
+stop_words = set(stopwords.words('english'))
+filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+print("Filtered Tokens (Stop Words Removed):", filtered_tokens)
+
+# 4. Stemming
+stemmer = PorterStemmer()
+stemmed_tokens = [stemmer.stem(word) for word in filtered_tokens]
+print("Stemmed Tokens:", stemmed_tokens)
+
+# 5. Lemmatization
+lemmatizer = WordNetLemmatizer()
+lemmatized_tokens = [lemmatizer.lemmatize(word) for word in filtered_tokens]
+print("Lemmatized Tokens:", lemmatized_tokens)
+
+# 6. TF-IDF Calculation
+corpus = ["The quick brown fox jumped over the lazy dog.",  # Example document 1
+          "The fox is quick and smart.",                    # Example document 2
+          "Dogs are loyal and friendly."]                   # Example document 3
+
+# Create TF-IDF Vectorizer
+vectorizer = TfidfVectorizer()
+
+# Apply the vectorizer to the corpus
+X = vectorizer.fit_transform(corpus)
+
+# Get the TF-IDF values and feature names (words)
+tfidf_matrix = X.toarray()
+feature_names = vectorizer.get_feature_names_out()
+
+# Display TF-IDF values
+print("\nTF-IDF Matrix:\n", tfidf_matrix)
+print("\nFeature Names (Words):", feature_names)

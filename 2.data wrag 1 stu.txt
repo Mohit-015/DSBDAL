@@ -1,0 +1,30 @@
+# 1. Import required libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('student.csv')  # Make sure the file is in the same folder
+print("First 5 rows:\n", df.head())
+
+# 2. Data Preprocessing
+print("\nMissing values:\n", df.isnull().sum())
+print("\nStatistical Info:\n", df.describe())
+
+# 3. Variable Descriptions
+print("\nData types:\n", df.dtypes)
+print("Shape (rows, columns):", df.shape)
+
+# 4. Min-Max Normalization on a column (e.g., 'Marks')
+if 'Marks' in df.columns:
+    df['Marks_MinMax'] = (df['Marks'] - df['Marks'].min()) / (df['Marks'].max() - df['Marks'].min())
+
+    # Box plot for normalized 'Marks'
+    df['Marks_MinMax'].plot.box(title='Boxplot of Normalized Marks')
+    plt.show()
+
+# 5. Convert Categorical 'PG' Column to Numeric
+if 'PG' in df.columns:
+    df['PG_Encoded'] = df['PG'].astype('category').cat.codes
+    print("\nPG column converted to numeric.")
+
+print("\nFinal Processed Data:\n", df.head())

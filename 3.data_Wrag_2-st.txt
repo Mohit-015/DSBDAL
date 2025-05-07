@@ -1,0 +1,48 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv('Academic_Performance.csv')
+print("First 5 rows:\n", df.head())
+
+# 1. Handle Missing Values
+print("\nMissing values before:\n", df.isnull().sum())
+
+# Fill missing in one column (e.g., 'Score') using mean
+if 'Score' in df.columns:
+    df['Score'].fillna(df['Score'].mean(), inplace=True)
+
+# Fill missing in whole dataset
+for col in df.columns:
+    if df[col].dtype == 'object':
+        df[col].fillna(df[col].mode()[0], inplace=True)
+    else:
+        df[col].fillna(df[col].mean(), inplace=True)
+
+print("\nMissing values after:\n", df.isnull().sum())
+
+# 2. Detect Outliers using Z-Score
+numeric_cols = df.select_dtypes(include=np.number).columns
+
+z_scores = (df[numeric_cols] - df[numeric_cols].mean()) / df[numeric_cols].std()
+outliers = (np.abs(z_scores) > 3)
+
+print("\nOutliers detected:\n", outliers.sum())
+
+# 3. Remove Outliers
+df_no_outliers = df[(np.abs(z_scores) <= 3).all(axis=1)]
+print("\nShape after removing outliers:", df_no_outliers.shape)
+
+# 4. Data Transformation (Binning)
+# Example: Create bins for 'Score' column
+if 'Score' in df_no_outliers.columns:
+    bins = [0, 40, 60, 80, 100]
+    labels = ['Fail', 'Average', 'Good', 'Excellent']
+    df_no_outliers['Score_Level'] = pd.cut(df_no_outliers['Score'], bins=bins, labels=labels)
+    print("\nBinned 'Score' column:\n", df_no_outliers[['Score', 'Score_Level']].head())
+
+# 5. Draw Box Plot for any numeric column
+if 'Score' in df_no_outliers.columns:
+    df_no_outliers['Score'].plot.box(title='Box Plot of Score (No Outliers)')
+    plt.show()

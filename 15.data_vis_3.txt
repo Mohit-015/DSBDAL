@@ -1,0 +1,25 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load the Iris dataset from Seaborn
+iris = sns.load_dataset('iris')
+
+# 1. List down the features and their types
+print("Features and their types:")
+for column in iris.columns:
+    print(f"{column}: {iris[column].dtype}")
+
+# 2. Create a histogram for each feature in the dataset
+iris.hist(figsize=(10, 8), bins=20)
+plt.suptitle('Histograms of Features')
+plt.show()
+
+# 3. Create a box plot for each feature in the dataset
+sns.boxplot(data=iris, orient='h')
+plt.title('Box plot of Features')
+plt.show()
+
+# 4. Compare distributions and identify outliers
+# Checking for outliers in the box plots above
+# Features like petal length and petal width often show outliers

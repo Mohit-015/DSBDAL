@@ -1,0 +1,30 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Load the dataset
+df = pd.read_csv('employee.csv')
+print("First 5 rows:\n", df.head())
+
+# 2. Missing values & stats
+print("\nMissing values:\n", df.isnull().sum())
+print("\nStatistical summary:\n", df.describe())
+
+# 3. Variable descriptions
+print("\nData types:\n", df.dtypes)
+print("\nShape of dataset:", df.shape)
+
+# 4. Type conversion (example: EmployeeID to string)
+if 'EmployeeID' in df.columns:
+    df['EmployeeID'] = df['EmployeeID'].astype(str)
+
+# 5. Z-score normalization and boxplot for 'Salary'
+if 'Salary' in df.columns:
+    df['Salary_Z'] = (df['Salary'] - df['Salary'].mean()) / df['Salary'].std()
+    df['Salary_Z'].plot.box(title='Z-Score Boxplot (Salary)')
+    plt.show()
+
+# 6. Convert categorical to numeric
+for col in df.select_dtypes(include='object').columns:
+    df[col] = df[col].astype('category').cat.codes
+
+print("\nData after encoding:\n", df.head())

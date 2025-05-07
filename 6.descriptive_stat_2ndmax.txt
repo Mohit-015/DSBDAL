@@ -1,0 +1,42 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('employee_2.csv')  # Change filename if needed
+print("First 5 rows:\n", df.head())
+
+# 1. Summary statistics: Maximum, Standard Deviation, Covariance
+if 'Age' in df.columns and 'Salary' in df.columns:
+    print("\nMaximum Values:")
+    print("Max Age:", df['Age'].max())
+    print("Max Salary:", df['Salary'].max())
+
+    print("\nStandard Deviation:")
+    print("Std Dev Age:", df['Age'].std())
+    print("Std Dev Salary:", df['Salary'].std())
+
+    print("\nCovariance between Age and Salary:")
+    print(df[['Age', 'Salary']].cov())
+
+# 2. Grouped summary by a categorical variable (e.g., Department)
+if 'Department' in df.columns and 'Salary' in df.columns:
+    print("\nGrouped Summary Statistics of Salary by Department:")
+    print(df.groupby('Department')['Salary'].describe())
+
+    # Create a list of salaries per department
+    salary_lists = df.groupby('Department')['Salary'].apply(list)
+    print("\nList of salaries by Department:\n", salary_lists)
+
+# 3. Group by JOB_ID and show count
+if 'JOB_ID' in df.columns:
+    print("\nJOB_ID counts:\n", df['JOB_ID'].value_counts())
+
+# 4. Data Visualization: Histogram for Salary
+if 'Salary' in df.columns:
+    plt.figure(figsize=(6, 4))
+    plt.hist(df['Salary'], bins=10, color='skyblue', edgecolor='black')
+    plt.title('Salary Distribution')
+    plt.xlabel('Salary')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()

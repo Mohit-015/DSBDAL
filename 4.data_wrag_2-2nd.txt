@@ -1,0 +1,58 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('Academic_Performance.csv')
+print("First 5 rows:\n", df.head())
+
+# 1. Handle missing values using median (numerical) and 0 (categorical)
+print("\nMissing values before:\n", df.isnull().sum())
+
+# Apply for a single column (example: 'Score')
+if 'Score' in df.columns:
+    df['Score'].fillna(df['Score'].median(), inplace=True)
+
+# Apply for whole dataset
+for col in df.columns:
+    if df[col].dtype == 'object':
+        df[col].fillna(0, inplace=True)
+    else:
+        df[col].fillna(df[col].median(), inplace=True)
+
+print("\nMissing values after:\n", df.isnull().sum())
+
+# 2. Detect outliers using IQR method
+numeric_cols = df.select_dtypes(include=np.number).columns
+
+for col in numeric_cols:
+    Q1 = df[col].quantile(0.25)
+    Q3 = df[col].quantile(0.75)
+    IQR = Q3 - Q1
+    print(f"\nColumn: {col} -> Q1: {Q1}, Q3: {Q3}")
+    
+    # 3. Remove outliers
+    condition = (df[col] >= (Q1 - 1.5 * IQR)) & (df[col] <= (Q3 + 1.5 * IQR))
+    df = df[condition]
+
+print("\nShape after removing outliers:", df.shape)
+
+# 4. Apply aggregation functions
+# Let's assume we want to reduce skewness in 'Score' by taking its average (to normalize)
+if 'Score' in df.columns:
+    avg_score = df['Score'].mean()
+    max_score = df['Score'].max()
+    print(f"\nAverage Score: {avg_score}")
+    print(f"Maximum Score: {max_score}")
+
+    # Reason: Averages help in understanding central tendency and are less affected by skewed data,
+    # helping to make the distribution more normal for ML applications.
+
+# 5. Scatter plot (e.g., between 'Hours_Studied' and 'Score')
+if 'Hours_Studied' in df.columns and 'Score' in df.columns:
+    plt.scatter(df['Hours_Studied'], df['Score'], color='blue')
+    plt.xlabel('Hours Studied')
+    plt.ylabel('Score')
+    plt.title('Scatter Plot: Hours Studied vs Score')
+    plt.grid(True)
+    plt.show()
